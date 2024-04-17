@@ -1,0 +1,60 @@
+---
+import { getPostList } from '../../content/postsApi'
+
+import { postTop } from '../../content/config'
+import dayjs from 'dayjs'
+interface Props{
+  slug?: string
+}
+
+const {slug} = Astro.props
+// 获取Postlist
+let postList = await getPostList(slug)
+
+// 对文件进行排序
+postList = postList.sort((a, b) => (new Date(b.date)).getTime() - (new Date(b.date)).getTime())
+
+// 抽去置顶post
+const postTopList: any[] = []
+postList = postList.filter(post => {
+  const {slug} = post
+  const isTop = postTop.find(post => slug.startsWith(post))
+  if(isTop!==undefined){
+    post.isTop = true
+    postTopList.push(post)
+    return false
+  }else{
+    return true
+  }
+})
+postList.unshift(...(postTopList.sort((a, b) => (new Date(b.date)).getTime() - (new Date(b.date)).getTime())))
+
+const pageList =  postList.map(post => (
+    `<li class={"post-item " + post.isTop ? 'post-top' : ''}>
+      {post.title===undefined ? null :
+        <h2 class="post-container-title">{post.slug}</h2>}
+
+      <div class="post-container-content">
+
+      </div>
+
+      <div class="post-container-footer">
+        <p>{dayjs(post.date).format('YYYY-MM-DD HH:ss:mm') }</p>
+        <p>
+
+        </p>
+      </div>
+    </li>`
+    ))
+---
+<style>
+.post-item{
+  display: block;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.4rem;
+  background: var(--bg-color-float);
+  color: inherit;
+  box-shadow: 0 1px 3px 1px var(--card-shadow);
+  transition: background var(--color-transition), box-shadow var(--color-transition);
+}
+</style>

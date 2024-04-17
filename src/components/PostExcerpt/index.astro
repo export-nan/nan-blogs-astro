@@ -1,0 +1,22 @@
+---
+import '@/styles/content.less'
+import { getPost } from '@/content/postsApi';
+import {ExcerptParser} from '@/lib/content-compiler/parser'
+import { join as pathJoin, dirname as pathDirname } from 'path'
+interface Props{
+  slug: string
+  class?: string
+}
+const { slug, class: className } = Astro.props
+const data = await getPost(slug)
+const parser = new ExcerptParser()
+const rootPath = pathJoin(process.cwd(), 'src/content', pathDirname(slug))
+const contentHtml = await parser.process(data?.body || '', {rootPath})
+---
+<!-- title -->
+<a href={'post/'+slug} class="post-title">
+  {data?.data.title}
+</a>
+
+<!-- content-->
+<Fragment set:html={contentHtml} />

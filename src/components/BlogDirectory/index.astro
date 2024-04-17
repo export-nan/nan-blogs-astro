@@ -1,0 +1,13 @@
+---
+import TreeList from '../TreeList/index.astro'
+import { getDirection, type ContentFileInfo } from '../../content/postsApi'
+
+const directory = await getDirection('note')
+---
+<!-- <Tree data={directory}></Tree> -->
+<TreeList data={directory} childKey='child'>
+	{(item: ContentFileInfo) => {
+		return <a href={'/'+item.slug}>{item.filename}</a>
+	}}
+</TreeList>
+

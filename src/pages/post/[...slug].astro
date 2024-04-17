@@ -1,0 +1,32 @@
+---
+import SlugLayout from '@/layout/slug.layout.astro' 
+import {CommonParser} from '@/lib/content-compiler/parser'
+import { type CollectionEntry } from 'astro:content';
+import { getPost, getPostList } from '@/content/postsApi';
+import { join as pathJoin, dirname as pathDirname } from 'path'
+// import 
+
+export async function getStaticPaths() {
+	const posts = await getPostList();	
+	return posts.map((post: any) => {
+		return {
+			params: { slug: post.slug},
+			props: post,
+		}
+	});
+}
+
+type Props = CollectionEntry<'note'>;
+
+const post = Astro.props;
+const data = await getPost(post.slug)
+const parser = new CommonParser()
+const rootPath = pathJoin(process.cwd(), 'src/content', pathDirname(post.slug))
+const contentHtml = await parser.process(data?.body||'', {rootPath})
+// console.log(contentHtml)
+---
+<SlugLayout title="About">
+	<div class="post-content-container">
+		<Fragment set:html={contentHtml} />
+	</div>
+</SlugLayout>
