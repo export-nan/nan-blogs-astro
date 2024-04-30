@@ -14,12 +14,11 @@ import {rehypeExcerpt} from './plugins/rehype-excerpt/index.mjs'
 import rehypeShiki from '@shikijs/rehype'
 import {rehypeCodeBlock} from './plugins/rehype-code-block';
 import {rehypeImg} from './plugins/rehype-img'; 
-// import {compileAssets} from './lib/assets.async'
+import {compileAssets} from './lib/assets.async'
  
 export type FileConfig = {
     rootPath: string
 }
-
 
 export abstract class Parser{
     core = unified()
@@ -34,7 +33,7 @@ export abstract class Parser{
         .use(rehypeRaw)
         this.compiler(this.core, fileConfig)
         const res = await this.core.process(input)
-        // await compileAssets()
+        await compileAssets()
         return res
     }
 }

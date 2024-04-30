@@ -1,7 +1,7 @@
-const assetsQueue:(()=>Promise<void>)[] = []
+const assetsQueue:(Promise<void>)[] = []
 
 
-export function addAssets(asyncFun: ()=>Promise<void>){
+export function addAssets(asyncFun: Promise<void>){
   assetsQueue.push(asyncFun)
 }
 
